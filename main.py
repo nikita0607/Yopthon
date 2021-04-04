@@ -2,6 +2,7 @@ import json
 import os
 import importlib
 import colorama
+import shutil
 
 from colorama import Fore, Back, Style
 from sys import argv, exit
@@ -12,7 +13,8 @@ colorama.init(convert=True, autoreset=True)
 a = argv   # Получаем доп. аргументы из ком. строки
 
 cur_dir = os.getcwd()   # Получаем текущую рабочую папку
-os.chdir(a.pop(0).replace("\\", "/").replace("/main.py", ""))   # Получаем папку, в которой лежит наш скрипт
+main_dir = a.pop(0).replace("\\", "/").replace("/main.py", "")  # Получаем папку, в которой лежит наш скрипт
+os.chdir(main_dir)
 
 # Если файл запущен через командную строку и имеет доп. аргументы
 if len(a):
@@ -126,14 +128,16 @@ if run:   # Если пользователь указал, что хочет з
             break
         name = name_file2[i] + name
 
-    os.chdir(dir)
-    print("Dir, name", dir, name)
+    shutil.copy(name_file2, main_dir)
+    os.rename(main_dir+"/"+name, "cached.py")
+
     # Запуск файла и отработка возникающих ошибок
     try:
-        print(Fore.LIGHTGREEN_EX+"-------Консоль файла---------")
-        importlib.import_module(name)
-    except ModuleNotFoundError:
+        print(Fore.LIGHTGREEN_EX + "-------Консоль файла---------")
+        __import__("cached.py")
+    except ModuleNotFoundError as ex:
         print(Fore.LIGHTGREEN_EX + "------------------------------")
         print(Fore.CYAN + "Работа файла завершена")
     except Exception as exception:
        print(Fore.LIGHTRED_EX+"------------------------------\nВозникла ошибка во время запуска файла:\n", "\t", Fore.RED+str(exception), sep="")
+    os.remove(main_dir+"/"+"cached.py")
