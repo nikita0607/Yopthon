@@ -127,16 +127,20 @@ if run:   # Если пользователь указал, что хочет з
             break
         name = name_file2[i] + name
 
-    shutil.copy(name_file2, main_dir)
-    os.rename(main_dir+"/"+name, "cached.py")
+    shutil.copy(name_file2, main_dir+"/cached.py")
 
     # Запуск файла и отработка возникающих ошибок
     try:
         print(Fore.LIGHTGREEN_EX + "-------Консоль файла---------")
         __import__("cached.py")
-    except ModuleNotFoundError as ex:
+    except ModuleNotFoundError as exception:
+        exception = str(exception)
         print(Fore.LIGHTGREEN_EX + "------------------------------")
-        print(Fore.CYAN + "Работа файла завершена")
+        if exception != "No module named \'cached.py\'; \'cached\' is not a package":
+            print(Fore.LIGHTRED_EX + "------------------------------\nВозникла ошибка во время запуска файла:\n", "\t",
+                  Fore.RED + str(exception), sep="")
+        else:
+            print(Fore.CYAN + "Работа файла завершена")
     except Exception as exception:
        print(Fore.LIGHTRED_EX+"------------------------------\nВозникла ошибка во время запуска файла:\n", "\t", Fore.RED+str(exception), sep="")
     os.remove(main_dir+"/"+"cached.py")
