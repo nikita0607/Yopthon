@@ -127,7 +127,7 @@ if run:   # Если пользователь указал, что хочет з
         name = name_file2[i] + name
 
     os.chdir(dir)
-
+    print("Dir, name", dir, name)
     # Запуск файла и отработка возникающих ошибок
     try:
         print(Fore.LIGHTGREEN_EX+"-------Консоль файла---------")
